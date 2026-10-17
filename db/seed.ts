@@ -22,17 +22,6 @@ async function main() {
     { id: '4', name: 'SQLite', category: 'Backend', level: 4 },
     { id: '5', name: 'ESP32 / IoT', category: 'Hardware', level: 4 },
   ]).onConflictDoNothing()
-
-  // 3. Insert a sample project
-  await db.insert(projects).values({
-    id: 'proj-1',
-    title: 'Modern Portfolio & Admin Dashboard',
-    slug: 'modern-portfolio',
-    description: 'A blazing-fast, server-rendered portfolio with a local SQLite database and secure admin panel.',
-    githubUrl: 'https://github.com',
-    featured: true,
-  }).onConflictDoNothing()
-
   console.log('✅ Database seeded successfully!')
 }
 

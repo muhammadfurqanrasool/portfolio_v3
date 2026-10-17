@@ -24,3 +24,11 @@ export async function saveFileLocally(file: File): Promise<string> {
   // Return the public relative path for database storage
   return `/uploads/${filename}`
 }
+
+export async function deleteFileLocally(filePath: string): Promise<void> {
+  if (!filePath) return
+
+  const fullPath = path.join(process.cwd(), 'public', filePath)
+  await fs.unlink(fullPath) 
+  
+}

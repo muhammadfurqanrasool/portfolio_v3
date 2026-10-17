@@ -15,10 +15,11 @@ export const projects = sqliteTable('projects', {
   title: text('title').notNull(),
   slug: text('slug').notNull().unique(),
   description: text('description').notNull(),
+  imageUrl: text('image_url'), 
   githubUrl: text('github_url'),
   demoUrl: text('demo_url'),
   featured: integer('featured', { mode: 'boolean' }).default(false),
-  createdAt: text('created_at').notNull().$defaultFn(() => new Date().toISOString()),
+  createdAt: text('created_at').default('CURRENT_TIMESTAMP'),
 })
 
 export const skills = sqliteTable('skills', {

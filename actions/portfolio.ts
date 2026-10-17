@@ -5,7 +5,7 @@ import { projects, skills, contactMessages } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { randomUUID } from 'crypto'
 import { revalidatePath } from 'next/cache'
-import { saveFileLocally } from '@/lib/upload'
+import { deleteFileLocally, saveFileLocally } from '@/lib/upload'
 import { profile } from '@/db/schema'
 
 
@@ -65,6 +65,14 @@ export async function createProjectAction(formData: FormData) {
   const githubUrl = formData.get('githubUrl') as string
   const demoUrl = formData.get('demoUrl') as string
   const featured = formData.get('featured') === 'on'
+  const imageFile = formData.get('image') as File | null
+
+  let imageUrl: string | null = null
+
+  // Save project thumbnail locally if provided
+  if (imageFile && imageFile.size > 0) {
+    imageUrl = await saveFileLocally(imageFile)
+  }
 
   try {
     await db.insert(projects).values({
@@ -75,6 +83,7 @@ export async function createProjectAction(formData: FormData) {
       githubUrl: githubUrl || null,
       demoUrl: demoUrl || null,
       featured,
+      imageUrl: imageUrl || null,
     })
 
     revalidatePath('/')
@@ -88,6 +97,7 @@ export async function createProjectAction(formData: FormData) {
 
 export async function deleteProjectAction(id: string) {
   try {
+    await deleteFileLocally((await db.select().from(projects).where(eq(projects.id, id)))[0].imageUrl || '')
     await db.delete(projects).where(eq(projects.id, id))
     revalidatePath('/')
     revalidatePath('/admin/projects')
